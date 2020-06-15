@@ -6,6 +6,9 @@ using System.Text;
 
 namespace NeuralNetwork
 {
+    /// <summary>
+    /// Binary Classifier capable of sorting data into one group or the other
+    /// </summary>
     public class Perceptron
     {
         private ITrainingSet _ts;
@@ -101,6 +104,9 @@ namespace NeuralNetwork
         {
             //an input is sent in and that input will have a weight attached to it
             //the return is the value of (input_1 * weight_1) + (input_2 * weight_2) etc... + bias
+            //this actually forms the slope of the line on the graph that we are trying to solve for
+            //if you plot the points on a graph of the two values (0 and 1) from the inputs (ie in an or 1|0 = 1 so point 1,0 is a 1, or a blue color
+            //whereas 0,0 = 0 would be point 0,0 being a red color.  you can draw a line to separate those two values
 
             if (weights == null || inputs == null) return -1;
             if (weights.Length != inputs.Length) return -1;

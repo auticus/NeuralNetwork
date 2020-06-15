@@ -6,6 +6,12 @@ namespace NeuralNetwork
 {
     public class TrainingSet_Xor : ITrainingSet
     {
+        /*
+         * An xor cannot be classified by a binary classifier because it is impossible to graph
+         * the xor into two distinct groups.  If you graph out the training set you will find that you cannot 
+         * draw a line between the two groups
+         */
+
         public List<TrainingSet> TrainingSets { get; private set; }
         public double[] InitialWeights { get; } = { 0, 0 };
 
