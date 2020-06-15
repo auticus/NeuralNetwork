@@ -27,7 +27,9 @@ namespace NeuralNetwork
         public void DrawPerceptronRay()
         {
             //shows the decision boundary of the perceptron
-            //graph.DrawRaw((float)(-(bias/weights[1])/(bias/weights[0])),(float)(-bias/weights[1]), Color.White); 
+
+            //drawRay takes the slope which is change of Y over change in X, followed by the intercept which is the -bias divided by second weight
+            //graph.DrawRay((float)(-(bias/weights[1])/(bias/weights[0])),(float)(-bias/weights[1]), Color.White); 
         }
     }
 }
