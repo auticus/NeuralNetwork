@@ -1,4 +1,7 @@
 ﻿using System;
+using NeuralNetwork.ActivationFunction;
+using NeuralNetwork.Brain;
+using NeuralNetwork.Training;
 
 namespace NeuralNetwork
 {
@@ -6,9 +9,34 @@ namespace NeuralNetwork
     {
         static void Main(string[] args)
         {
+            //TrainPerceptor();
+            TrainNeuralNetwork(); //will train an xor neural network
+
+            //neural networks sit under tensor flow in google, which is also what unity utilizes for its ML
+
+            var x = Console.ReadLine();
+        }
+
+        private static void TrainNeuralNetwork()
+        {
+            var input = new BrainFactoryInput()
+            {
+                ActivationFunctionInputOutput = new Sigmoid(),
+                ActivationFunctionHiddenLayers = new Sigmoid(), //do not use TanH for the xorbrain it is counter productive.  The xor needs 0 or 1, TanH brings in negative values as well
+                Inputs = 2,
+                Outputs = 1,
+                HiddenLayers = 1,
+                NeuronsPerHiddenLayer = 2,
+                Alpha = 0.8 //how much impact the training has, sometimes you'll see NaN come back and this dials back the calculations a bit
+            };
+            var brain = BrainFactory.CreateBrain<XorBrain>(input);
+            brain.Think(trainingIterations: 1000);
+        }
+
+        private static void TrainPerceptor()
+        {
             Train_Or();
             Train_And();
-            var x = Console.ReadLine();
         }
 
         private static Perceptron Train_Or()

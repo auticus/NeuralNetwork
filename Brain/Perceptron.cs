@@ -1,25 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.Intrinsics;
 using System.Text;
+using System.IO;
+using NeuralNetwork.Training;
+using Newtonsoft.Json;
 
-namespace NeuralNetwork
+namespace NeuralNetwork.Brain
 {
     /// <summary>
     /// Binary Classifier capable of sorting data into one group or the other
     /// </summary>
+    [Serializable]
     public class Perceptron
     {
-        private ITrainingSet _ts;
-        private double _bias = 0;
+        public double Bias = 0; //used as an extra weight
+        public double[] Weights = { 0 };
         private double _totalError = 0;
-        private double[] _weights = { 0 };
+        private ITrainingSet _ts;
+
+        /// <summary>
+        /// Serialization constructor
+        /// </summary>
+        public Perceptron()
+        {
+
+        }
 
         public Perceptron(ITrainingSet ts)
         {
             _ts = ts;
-            _weights = ts.InitialWeights;
+            Weights = ts.InitialWeights;
         }
 
         /// <summary>
@@ -31,7 +40,7 @@ namespace NeuralNetwork
         public double CalculateOutput (double v1, double v2)
         {
             var inputs = new double[] { v1, v2 };
-            var dotProduct = DotProductBias(_weights, inputs);
+            var dotProduct = DotProductBias(Weights, inputs);
             return dotProduct > 0 ? 1 : 0;
         }
 
@@ -50,27 +59,44 @@ namespace NeuralNetwork
             }
         }
 
+        public void Save(string perceptronName)
+        {
+            var output = JsonConvert.SerializeObject(this);
+            var fileName = perceptronName + ".dat";
+            File.WriteAllText(fileName, output);
+        }
+
+        public void Load(string perceptronName)
+        {
+            var perceptron = new Perceptron();
+            var fileName = perceptronName + ".dat";
+            using (var sw = new StreamReader(fileName))
+            {
+                var json = sw.ReadToEnd();
+                perceptron = JsonConvert.DeserializeObject<Perceptron>(json);
+            }
+
+            Bias = perceptron.Bias;
+            Weights = perceptron.Weights;
+        }
+
         private void InitializeWeights()
         {
-            var rnd = new Random();
-            var maxValue = 1.0f;
-            var minValue = -1.0f;
-
-            for(var i = 0; i < _weights.Length; i++)
+            for(var i = 0; i < Weights.Length; i++)
             {
-                _weights[i] = rnd.NextDouble() * (maxValue - minValue) + minValue;
+                Weights[i] = Util.RandomRange(-1.0f, 1.0f);
             }
-            _bias = rnd.NextDouble() * (maxValue - minValue) + minValue;
+            Bias = Util.RandomRange(-1.0f, 1.0f);
         }
 
         private void WriteWeightsValues()
         {
             var sb = new StringBuilder();
-            for(int i = 0; i < _weights.Length; i++)
+            for(int i = 0; i < Weights.Length; i++)
             {
-                sb.Append($"Weight {i + 1}: {_weights[0]} ");
+                sb.Append($"Weight {i + 1}: {Weights[0]} ");
             }
-            sb.Append($"Bias: {_bias}");
+            sb.Append($"Bias: {Bias}");
             Console.WriteLine(sb.ToString());
         }
 
@@ -81,12 +107,12 @@ namespace NeuralNetwork
             //will be either a 0 or a 1 (if its a 0 no error occurred, if it is a 1 or -1 then we have an issue)
             var error = _ts.TrainingSets[trainingSetIndex].Output - CalculateOutput(trainingSetIndex);
             _totalError += MathF.Abs((float)error);
-            for (var i = 0; i < _weights.Length; i++)
+            for (var i = 0; i < Weights.Length; i++)
             {
                 //now lets change the weight to be the old value plus the error value multiplied by the input that is associated with that weight
-                _weights[i] = _weights[i] + error * _ts.TrainingSets[trainingSetIndex].Inputs[i];
+                Weights[i] = Weights[i] + error * _ts.TrainingSets[trainingSetIndex].Inputs[i];
             }
-            _bias += error; //update the bias with the error produced
+            Bias += error; //update the bias with the error produced
         }
 
         /// <summary>
@@ -96,7 +122,7 @@ namespace NeuralNetwork
         /// <returns></returns>
         private double CalculateOutput(int trainingSetIndex)
         {
-            var dotProduct = DotProductBias(_weights, _ts.TrainingSets[trainingSetIndex].Inputs);
+            var dotProduct = DotProductBias(Weights, _ts.TrainingSets[trainingSetIndex].Inputs);
             return dotProduct > 0 ? 1 : 0;
         }
 
@@ -118,7 +144,7 @@ namespace NeuralNetwork
                 returnValue += weights[i] * inputs[i];
             }
 
-            returnValue += _bias;
+            returnValue += Bias;
             return returnValue;
         }
     }

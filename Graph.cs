@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using NeuralNetwork.Training;
 
 namespace NeuralNetwork
 {
     public class Graph
     {
-        //example graph code
+        //example graph code, this is a console app so there are no graphics, but implmenting this in unity or something with a front end would be useful
+        //and this is example code for how that could look
         ITrainingSet _ts;
         public Graph(ITrainingSet ts)
         {

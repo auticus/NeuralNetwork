@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace NeuralNetwork
+namespace NeuralNetwork.Training
 {
     public class TrainingSet
     {
