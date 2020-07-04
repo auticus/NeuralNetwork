@@ -10,7 +10,8 @@ namespace NeuralNetwork
     {
         public static T CreateBrain<T>(BrainFactoryInput input) where T: Brain.Brain
         {
-            var nNetwork = new Brain.NeuralNetwork(input.ActivationFunction, input.Inputs, input.Outputs, input.HiddenLayers, input.NeuronsPerHiddenLayer, input.Alpha);
+            var nNetwork = new Brain.NeuralNetwork(input.ActivationFunctionInputOutput, input.ActivationFunctionHiddenLayers,
+                input.Inputs, input.Outputs, input.HiddenLayers, input.NeuronsPerHiddenLayer, input.Alpha);
             return (T)Activator.CreateInstance(typeof(T), nNetwork);
         }
     }
